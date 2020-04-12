@@ -3,10 +3,17 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+const mongoose=require('mongoose')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var preprocessingRouter = require('./routes/preprocessing');
+//connection to BD
+mongoose.connect('mongodb://localhost:27017/PI', {useNewUrlParser: true});
+var db = mongoose.connection; 
+db.on('error', console.error.bind(console, 'Erreur lors de la connexion')); 
+db.once('open', function (){
+    console.log("Connexion à la base OK"); 
+}); 
 
 var app = express();
 

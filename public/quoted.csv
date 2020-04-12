@@ -1,4 +1,4 @@
-,id,UserName,date,retweets,text,geoloc
+id,TweetId,UserName,date,retweets,text,geoloc
 0,1235353934484639744,KararHaber,2020-03-04,0,"Alman havayolu şirketi Lufthansa, koronavirüs nedeniyle 150 uçağın yere çekileceğini açıkladı https://www.karar.com/lufthansa-koronavirus-nedeniyle-150-ucagini-yere-cekiyor-1547722",
 1,1235353860618805248,lamda,2020-03-04,0,Lufthansa is grounding the equivalent of 150 airplanes. ,
 2,1235353397617995779,FlySWISS,2020-03-04,0,"@rafernandez84, please be advised that we will not be able to confirm any information on the accommodation as yet, however, should there be a need, the airport services will be responsible then. Kind regards, Florence.",
