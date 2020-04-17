@@ -7,6 +7,7 @@ const mongoose=require('mongoose')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var preprocessingRouter = require('./routes/preprocessing');
+var preprocRouter = require('./routes/preproc');
 //connection to BD
 mongoose.connect('mongodb://localhost:27017/PI', {useNewUrlParser: true});
 var db = mongoose.connection; 
@@ -30,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/preprocessing', preprocessingRouter);
-
+app.use('/preproc', preprocRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

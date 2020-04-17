@@ -11,6 +11,7 @@ var dataSchema = new Schema(
   Text: { type: String },
   Geoloc: { type: String },
   textTranslated: { type: String },
+  sentiment :{type:Number}
 
 });
 

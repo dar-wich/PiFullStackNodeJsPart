@@ -15,9 +15,8 @@ router.get('/', function (req, res, next) {
         var myData = new Data();
         for (let a = 0; a < data.length; a++) {
 
-            console.log("============================================================================"+data[a].text);
             translate(data[a].text, { to: 'en' }).then(tr => {
-                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"+tr);
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"+tr.text);
                 myData = new Data(
                     {
                         id: data[a].id,
