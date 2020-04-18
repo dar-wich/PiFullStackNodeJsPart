@@ -20,6 +20,7 @@
     "morgan": "~1.9.1",
     "natural": "^0.6.3",
     "nodemon": "^2.0.3",
+    "stopword": "^1.0.0",
     "yandex-translate": "^2.1.3"
   }
 }

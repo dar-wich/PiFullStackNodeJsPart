@@ -99,10 +99,20 @@ async function prePro() {
 }
 
 router.get('/analysis', function (req, res, next) {
-  let result = await prePro();
+  let result = prePro();
 
   res.send(JSON.stringify(result));
 
+});
+
+router.get('/removeAll', function (req, res, next) {
+  Data.find({}, function (err, datas) {
+    datas.forEach(x=>{
+      Data.deleteOne({},{},function(){});
+    });
+    res.send(JSON.stringify(datas));
+  });
+  
 });
 
 
