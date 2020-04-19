@@ -61,6 +61,7 @@ async function prePro() {
   let result = [];
   Data.find({}, function (err, datas) {
     datas.forEach(x => {
+      if((x.textTranslated!="undefined")&&(x.textTranslated!="")){
       const lexedReview = aposToLexForm(x.textTranslated);
 
       const casedReview = lexedReview.toLowerCase();
@@ -77,8 +78,9 @@ async function prePro() {
       const tokenizedReview = tokenizer.tokenize(alphaOnlyReview);
 
       const filteredReview = SW.removeStopwords(tokenizedReview);
-
+      console.log(JSON.stringify(filteredReview))
       result.push(filteredReview);
+      }
     });
     return result;
   }); 
@@ -86,7 +88,7 @@ async function prePro() {
 
 router.get('/analysis', function (req, res, next) {
   let result = prePro();
-
+  console.log(JSON.stringify(result));
   res.send(JSON.stringify(result));
 
 });
@@ -94,7 +96,7 @@ router.get('/analysis', function (req, res, next) {
 router.get('/removeAll', function (req, res, next) {
   Data.find({}, function (err, datas) {
     datas.forEach(x=>{
-      Data.deleteOne({},{},function(){});
+      Data.remove({},{},function(){});
     });
     res.send(JSON.stringify(datas));
   });
