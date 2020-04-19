@@ -9,6 +9,8 @@ const natural = require('natural');
 var Analyzer = require('natural').SentimentAnalyzer;
 var stemmer = require('natural').PorterStemmer;
 var analyzer = new Analyzer("English", stemmer, "afinn");
+
+
 async function Do() {
   var i = 0;
   tab: [];
@@ -89,31 +91,34 @@ async function prePro() {
       const tokenizedReview = tokenizer.tokenize(alphaOnlyReview);
 
       const filteredReview = SW.removeStopwords(tokenizedReview);
-      const sentiment = analysis(filteredReview)
+      const sentiment = await analysis(filteredReview);
       x.sentiment = sentiment;
       x.save()
       result.push(filteredReview);
       }
     });
-    return result;
   }); 
+  return result;
 }
 
-router.get('/analysis', function (req, res, next) {
-  let result = prePro();
-  console.log(JSON.stringify(result));
-  res.send(JSON.stringify(result));
-
+router.get('/analysis', async function (req, res, next) {
+  let result = await prePro();
+  setTimeout(()=>{
+    res.send(JSON.stringify(result));
+  },1000);
+  
+  
 });
 
-router.get('/removeAll', function (req, res, next) {
+router.get('/removeAll',async function (req, res, next) {
   Data.find({}, function (err, datas) {
-    datas.forEach(x=>{
-      Data.remove({},{},function(){});
+    datas.forEach(x => {
+      Data.remove({});
     });
     res.send(JSON.stringify(datas));
   });
   
+
 });
 
 
