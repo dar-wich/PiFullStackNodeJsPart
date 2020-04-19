@@ -6,25 +6,15 @@ var translate = require('yandex-translate')('trnsl.1.1.20200416T235008Z.cada43d1
 const SW = require('stopword');
 const aposToLexForm = require('apos-to-lex-form');
 const natural = require('natural');
-
-
-
-
 async function Do() {
-
   var i = 0;
-
   tab: [];
-
   csvtojson().fromFile("public/quoted.csv")
     .then(csvData => { tab = csvData; console.log(tab.length) })
-
   setTimeout(() => {
-
     tab.forEach((element, j) => {
       setTimeout(() => {
         const text = translate.translate(element.text, { to: 'en' }, function (err, res) {
-
           if (res != undefined) {
             i++;
             console.log(res.text + " " + i)
@@ -39,7 +29,6 @@ async function Do() {
                 Geoloc: element.geoloc,
                 textTranslated: res.text + ""
               },
-
             );
             myData.save()
               .then(item => {
@@ -48,10 +37,7 @@ async function Do() {
               .catch(err => {
                 console.log("error")
               });
-
           }
-
-
         })
       }, j * 500);
     });
