@@ -6,6 +6,9 @@ var translate = require('yandex-translate')('trnsl.1.1.20200416T235008Z.cada43d1
 const SW = require('stopword');
 const aposToLexForm = require('apos-to-lex-form');
 const natural = require('natural');
+var Analyzer = require('natural').SentimentAnalyzer;
+var stemmer = require('natural').PorterStemmer;
+var analyzer = new Analyzer("English", stemmer, "afinn");
 async function Do() {
   var i = 0;
   tab: [];
@@ -57,6 +60,14 @@ router.get('/', function (req, res, next) {
 
 });
 
+const analysis = (sentence)=>{
+  return analyzer.getSentiment(sentence)
+}
+
+ router.get('/testAnalysis', (req,res,next)=>{
+   let arrayExample = ["I","and","love", "cherries"]
+   return analysis(arrayExample)
+ })
 async function prePro() {
   let result = [];
   Data.find({}, function (err, datas) {
@@ -78,7 +89,9 @@ async function prePro() {
       const tokenizedReview = tokenizer.tokenize(alphaOnlyReview);
 
       const filteredReview = SW.removeStopwords(tokenizedReview);
-      console.log(JSON.stringify(filteredReview))
+      const sentiment = analysis(filteredReview)
+      x.sentiment = sentiment;
+      x.save()
       result.push(filteredReview);
       }
     });
