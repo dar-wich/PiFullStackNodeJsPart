@@ -122,7 +122,12 @@ router.get('/analysis', async function (req, res, next) {
 
 router.get('/removeAll', async function (req, res, next) {
   Data.find({}, function (err, datas) {
-    
+    datas.forEach(x => {
+      if(x.textTranslated=="undefined"){
+      x.remove();
+      }
+
+    });
     res.send(JSON.stringify(datas));
   });
 
