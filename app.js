@@ -8,6 +8,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var preprocessingRouter = require('./routes/preprocessing');
 var preprocRouter = require('./routes/preproc');
+var cors = require("cors");
+
 //connection to BD
 mongoose.connect('mongodb://localhost:27017/PI', {useNewUrlParser: true});
 var db = mongoose.connection; 
@@ -27,6 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

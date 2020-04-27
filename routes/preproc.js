@@ -18,30 +18,30 @@ async function Do() {
     tab.forEach((element, j) => {
       setTimeout(() => {
         const text = translate.translate(element.text, { to: 'en' }, function (err, res) {
-          if ((res != undefined)&&(res.text!=undefined)) {
-            
-              i++;
-              console.log(res.text + " " + i)
-              var myData = new Data(
-                {
-                  id: element.id,
-                  TweetId: element.TweetId,
-                  userName: element.UserName,
-                  Date: element.date,
-                  Retweet: element.retweets,
-                  Text: element.text,
-                  Geoloc: element.geoloc,
-                  textTranslated: res.text + ""
-                },
-              );
-              myData.save()
-                .then(item => {
-                  console.log("data " + i + " saved to database");
-                })
-                .catch(err => {
-                  console.log("error")
-                });
-            
+          if ((res != undefined) && (res.text != undefined)) {
+
+            i++;
+            console.log(res.text + " " + i)
+            var myData = new Data(
+              {
+                id: element.id,
+                TweetId: element.TweetId,
+                userName: element.UserName,
+                Date: element.date,
+                Retweet: element.retweets,
+                Text: element.text,
+                Geoloc: element.geoloc,
+                textTranslated: res.text + ""
+              },
+            );
+            myData.save()
+              .then(item => {
+                console.log("data " + i + " saved to database");
+              })
+              .catch(err => {
+                console.log("error")
+              });
+
           }
         })
       }, j * 500);
@@ -62,10 +62,11 @@ router.get('/', function (req, res, next) {
 
 });
 
-async function sentiment(sentence) {
+function sentiment(sentence) {
   const { SentimentAnalyzer, PorterStemmer } = natural;
   const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
   const analysis = analyzer.getSentiment(sentence);
+  console.log(JSON.stringify(analysis));
   return analysis;
 }
 
@@ -76,10 +77,11 @@ async function sentiment(sentence) {
 router.get('/testAnalysis', (req, res, next) => {
   let arrayExample = ["I", "and", "love", "cherries"]
   let sen = sentiment(arrayExample);
+
   res.send(JSON.stringify(sentiment(arrayExample)));
 })
 
-async function prePro() {
+function prePro() {
   let result = [];
   Data.find({}, function (err, datas) {
     datas.forEach(x => {
@@ -91,7 +93,7 @@ async function prePro() {
         let alphaOnlyReview = casedReview.replace('""', '');
         alphaOnlyReview = alphaOnlyReview.replace('RT ', '');
         alphaOnlyReview = alphaOnlyReview.replace(/@[A-Za-z0-9]+/gm, '');
-        alphaOnlyReview = alphaOnlyReview.replace(/^(\s*#\w+\s*)+$/gm, "")
+        alphaOnlyReview = alphaOnlyReview.replace(/^(\s*#\w+\s*)+$/gm, "");
         alphaOnlyReview = alphaOnlyReview.replace(/(?:https?|ftp):\/\/[\n\S]+/gm, '');
         alphaOnlyReview = alphaOnlyReview.replace(/[^a-zA-Z\s]+/gm, '');
 
@@ -102,8 +104,8 @@ async function prePro() {
         const filteredReview = SW.removeStopwords(tokenizedReview);
         let sen = sentiment(filteredReview);
         console.log(sen);
-        x.sentiment = sen;
-        x.save();
+        x.sentiment = Number(sen);
+        x.updateOne();
         result.push(sen);
       }
     });
@@ -120,11 +122,52 @@ router.get('/analysis', async function (req, res, next) {
 
 });
 
+function performance() {
+  let result = [];
+  for (let i = 0; i < new Date().getMonth() + 1; i++) {
+    let object = { month: i+1, nbBadRev: 0, nbGoodRev: 0, nbNaturalRev: 0 };
+    Data.aggregate([
+      { $match: { $and: [{ $expr: { $eq: [{ $month: "$Date" }, i + 1] } }, { sentiment: { $lt: 0 } }] } },
+      { $count: "nbBadRev" }
+    ]).exec(function (err, res) {
+      if (res[0] != undefined){
+        object.nbBadRev = JSON.stringify(res[0].nbBadRev);
+      }
+    });
+    Data.aggregate([
+      { $match: { $and: [{ $expr: { $eq: [{ $month: "$Date" }, i + 1] } }, { sentiment: { $gt: 0 } }] } },
+      { $count: "nbGoodRev" }
+    ]).exec(function (err, res) {
+      if (res[0] != undefined)
+        object.nbGoodRev = JSON.stringify(res[0].nbGoodRev);
+    });
+    Data.aggregate([
+      { $match: { $and: [{ $expr: { $eq: [{ $month: "$Date" }, i + 1] } }, { sentiment: { $eq: 0 } }] } },
+      { $count: "nbNatRev" }
+    ]).exec(function (err, res) {
+      if (res[0] != undefined)
+        object.nbNaturalRev = JSON.stringify(res[0].nbNatRev);
+    });
+    result.push(object)
+    
+  }
+  setTimeout(()=>{console.log(JSON.stringify(result));
+  },2000)
+  return result;
+}
+
+router.get('/performance', async function (req, res, next) {
+  let stat = await performance();
+  setTimeout(() => {
+    res.send(JSON.stringify(stat));
+  }, 1000);
+});
+
 router.get('/removeAll', async function (req, res, next) {
   Data.find({}, function (err, datas) {
     datas.forEach(x => {
-      if(x.textTranslated=="undefined"){
-      x.remove();
+      if (x.textTranslated == "undefined") {
+        x.remove();
       }
 
     });
