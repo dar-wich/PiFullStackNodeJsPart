@@ -177,5 +177,12 @@ router.get('/removeAll', async function (req, res, next) {
 
 });
 
+router.get('/getAllTweets', async function (req, res, next) {
+  Data.find({ sentiment: { $ne: null }},function (err,datas) {
+    res.send(datas)
+  })
+
+ 
+});
 
 module.exports = router;

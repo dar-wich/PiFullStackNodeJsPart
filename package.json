@@ -22,6 +22,7 @@
     "natural": "^0.6.3",
     "nodemon": "^2.0.3",
     "stopword": "^1.0.0",
+    "topic-detection": "^0.1.2",
     "yandex-translate": "^2.1.3"
   }
 }
