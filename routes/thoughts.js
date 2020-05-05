@@ -155,7 +155,7 @@ plan.save()
   console.log("data " + i + " saved to database");
 })
 .catch(err => {
-  console.log("error")
+  console.log(err)
 });
     res.send("haha")
 });
@@ -183,6 +183,24 @@ router.get('/allProblems', async function(req, res) {
 res.send("j")
   
    });
+
+   router.post('/updateSolutionStatus', async function(req, res) {
+
+    console.log("dddd")
+    var obj=new Plan(req.body)
+    Plan.find({_id:req.body._id},function(err,doc){
+        doc.forEach(element => {
+            element.Solutions[req.query.indice].status='done'
+          element.save()
+        });
+    
+    
+  res.send("j")
+   });
+   });
+
+
+   
    router.post('/removeProb', async function(req, res) {
 
    
@@ -199,5 +217,6 @@ res.send("j")
     });
 
 
+   
 
 module.exports = router;
