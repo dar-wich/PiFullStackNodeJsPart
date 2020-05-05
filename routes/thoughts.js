@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Data = require('../models/Data');
+const Plan = require('../models/Plan');
 var TopicDetection = require('topic-detection');
 
 function frequencyNumber(arr,ch){
@@ -141,4 +142,62 @@ router.get('/worstReviewsByTopic', async function(req, res) {
     })
     
 });
+
+
+router.post('/addProblem', async function(req, res) {
+
+ var plan=new Plan(req.body);
+
+console.log(plan)
+
+plan.save()
+.then(item => {
+  console.log("data " + i + " saved to database");
+})
+.catch(err => {
+  console.log("error")
+});
+    res.send("haha")
+});
+
+router.get('/allProblems', async function(req, res) {
+
+   
+    Plan.find({},function(err,docs){
+        res.send(docs)
+    })
+
+  
+   });
+   router.post('/updateSolution', async function(req, res) {
+
+   
+    
+   Plan.find({_id:req.body._id},function(err,doc){
+  doc.forEach(element => {
+    element.Solutions=req.body.Solutions;
+    element.save();
+  });
+  })
+  
+res.send("j")
+  
+   });
+   router.post('/removeProb', async function(req, res) {
+
+   
+    
+    Plan.find({_id:req.body._id},function(err,doc){
+        doc.forEach(element => {
+      
+          element.remove({})
+        });
+   
+    })
+ res.send("j")
+   
+    });
+
+
+
 module.exports = router;
