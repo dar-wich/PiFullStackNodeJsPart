@@ -14,4 +14,39 @@ router.get('/login', function(req, res, next) {
   
 });
 
+router.post('/addUser', function(req, res, next) {
+
+ var user=new User(req.body);
+  user.save().then(item => {
+    console.log("data");
+  })
+  .catch(err => {
+    console.log(err)
+  });
+      res.send("haha")
+});
+
+router.get('/getAllUsers', function(req, res, next) {
+
+  User.find({},function(err,doc){
+    res.send(doc)
+  })
+ });
+
+
+ router.post('/removeUser', async function(req, res) {
+
+   
+    
+  User.find({_id:req.body._id},function(err,doc){
+      doc.forEach(element => {
+    
+        element.remove({})
+      });
+ 
+  })
+res.send("j")
+ 
+  });
+
 module.exports = router;
