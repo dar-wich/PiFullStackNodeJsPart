@@ -145,10 +145,11 @@ var probDesc=""
     })
     setTimeout(() => {
         var reviews=[]
-       
+       console.log(tabSol)
         if(tabSol.length==1){
             var detector = new TopicDetection();
             var scores = detector.topics(probDesc);
+            console.log(Object.keys(scores)[0])
             Data.find({ $and: [ { sentiment: { $lt: 0 } }, { textTranslated: {$regex :  Object.keys(scores)[0]} } ] },function(err,docs){
                 var nbBefore=0;
                 var nbAfter=0;
@@ -190,15 +191,14 @@ var probDesc=""
               //  final.push(nbAfter)
                 //parcours/////////
                 
-                for(let i=1;i<tabSol.length;i++){
+                for(let i=0;i<tabSol.length;i++){
                     var nbb=0;
                     var nba=0;
-                    console.log(tabSol[i-1].date)
-                    console.log(tabSol[i].date)
+                  
                     docs.forEach(element => {
                         
                         //(new Date(element.Date)< new Date(tabSol[i].date))&&(new Date(element.Date)>new Date(tabSol[i-1].date))
-                        if((new Date(element.Date)>new Date(tabSol[i-1].date))&&(new Date(element.Date)<new Date(tabSol[i].date)))
+                        if((new Date(element.Date)>new Date(tabSol[i].date))&&(new Date(element.Date)<new Date(tabSol[i].date)))
                         nbb++;
                         else if(new Date(element.Date)>new Date(tabSol[i].date))
                         nba++
@@ -207,7 +207,7 @@ var probDesc=""
                         previous:nbb,
                         solution:nba,
                     }*/
-                    final.push(nbb)
+                    //final.push(nbb)
                     final.push(nba)
                 }
                 res.send(final)
