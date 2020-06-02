@@ -8,7 +8,6 @@ const aposToLexForm = require('apos-to-lex-form');
 const natural = require('natural');
 
 
-
 async function Do() {
   var i = 0;
   tab: [];
@@ -21,6 +20,9 @@ async function Do() {
           if ((res != undefined) && (res.text != undefined)) {
 
             i++;
+
+
+
             console.log(res.text + " " + i)
             var myData = new Data(
               {
@@ -103,6 +105,10 @@ function prePro() {
 
         const filteredReview = SW.removeStopwords(tokenizedReview);
         let sen = sentiment(filteredReview);
+
+
+
+
         console.log(sen);
         x.sentiment = Number(sen);
         x.save();

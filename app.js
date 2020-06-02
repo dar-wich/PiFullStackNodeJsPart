@@ -16,7 +16,9 @@ var cors = require("cors");
 mongoose.connect('mongodb://localhost:27017/PI', {useNewUrlParser: true});
 var db = mongoose.connection; 
 db.on('error', console.error.bind(console, 'Erreur lors de la connexion')); 
+
 db.once('open', function (){
+
     console.log("Connexion à la base OK"); 
 }); 
 
@@ -28,8 +30,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
+
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: false }));
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());

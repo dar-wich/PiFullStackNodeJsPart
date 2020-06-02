@@ -34,6 +34,12 @@ router.get('/', function (req, res, next) {
             }).catch(err => {
                 console.error(err);
             });
+
+
+
+
+
+
             myData.save()
                     .then(item => {
                         console.log("data saved to database");
