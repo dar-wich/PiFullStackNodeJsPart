@@ -125,6 +125,106 @@ Data.find({sentiment:{$eq: 0}},function(err,docs){
     })
     
 });
+router.get('/chartSolutions', async function(req, res) {
+var tabSol=[]
+var probDesc=""
+   
+    await Plan.find({},function(err,docs){
+       console.log()
+        if(docs[0]!=undefined){
+        
+            probDesc=docs[req.query.indiceProb].Description
+            docs[req.query.indiceProb].Solutions.forEach(element => {
+    if(element.status==='done'){
+        tabSol.push(element)
+   
+    }
+});
+        }
+      
+    })
+    setTimeout(() => {
+        var reviews=[]
+       
+        if(tabSol.length==1){
+            var detector = new TopicDetection();
+            var scores = detector.topics(probDesc);
+            Data.find({ $and: [ { sentiment: { $lt: 0 } }, { textTranslated: {$regex :  Object.keys(scores)[0]} } ] },function(err,docs){
+                var nbBefore=0;
+                var nbAfter=0;
+                var final=[];
+                docs.forEach(element => {
+                    if(new Date(element.Date)< new Date(tabSol[0].date))
+                    nbBefore++;
+                    else nbAfter++
+                });
+                var obj={
+                    previous:nbBefore,
+                    solution:nbAfter,
+                   // date :new Date(tabSol[0].date)
+                }
+                final.push(obj)
+                //parcours/////////
+                res.send(final)
+            })
+           
+        }
+        else if(tabSol.length>1){
+            var detector = new TopicDetection();
+            var scores = detector.topics(probDesc);
+            Data.find({ $and: [ { sentiment: { $lt: 0 } }, { textTranslated: {$regex :  Object.keys(scores)[0]} } ] },function(err,docs){
+                var nbBefore=0;
+                var nbAfter=0;
+                var final=[];
+                docs.forEach(element => {
+                    
+                    if(new Date(element.Date)< new Date(tabSol[0].date))
+                    nbBefore++;
+                   // else nbAfter++
+                });
+               /* var obj={
+                    previous:nbBefore,
+                    solution:nbAfter,
+                }*/
+                final.push(nbBefore)
+              //  final.push(nbAfter)
+                //parcours/////////
+                
+                for(let i=1;i<tabSol.length;i++){
+                    var nbb=0;
+                    var nba=0;
+                    console.log(tabSol[i-1].date)
+                    console.log(tabSol[i].date)
+                    docs.forEach(element => {
+                        
+                        //(new Date(element.Date)< new Date(tabSol[i].date))&&(new Date(element.Date)>new Date(tabSol[i-1].date))
+                        if((new Date(element.Date)>new Date(tabSol[i-1].date))&&(new Date(element.Date)<new Date(tabSol[i].date)))
+                        nbb++;
+                        else if(new Date(element.Date)>new Date(tabSol[i].date))
+                        nba++
+                    });
+                   /* var obj={
+                        previous:nbb,
+                        solution:nba,
+                    }*/
+                    final.push(nbb)
+                    final.push(nba)
+                }
+                res.send(final)
+            })
+            
+        }
+        else if(tabSol.length==0){
+            var final=[];
+            res.send(final)
+        } 
+        
+    }, 2000);
+    
+       // res.send("cc");
+    
+    
+});
 router.get('/worstReviewsByTopic', async function(req, res) {
 
     var reviews=[];
@@ -191,6 +291,7 @@ res.send("j")
     Plan.find({_id:req.body._id},function(err,doc){
         doc.forEach(element => {
             element.Solutions[req.query.indice].status='done'
+           // element.Solutions[req.query.indice].date=new Date()
           element.save()
         });
     

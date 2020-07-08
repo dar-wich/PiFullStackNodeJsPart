@@ -105,7 +105,7 @@ function prePro() {
         let sen = sentiment(filteredReview);
         console.log(sen);
         x.sentiment = Number(sen);
-        x.updateOne();
+        x.save();
         result.push(sen);
       }
     });
